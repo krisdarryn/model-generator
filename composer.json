@@ -1,0 +1,21 @@
+{
+    "name": "krisdarryn/modelgenerator",
+    "description": "Generate model class from database tables.",
+    "type": "project",
+    "require-dev": {
+        "illuminate/database": "^5.4",
+        "klein/klein": "^2.1"
+    },
+    "authors": [
+        {
+            "name": "Kris Darryn",
+            "email": "krisdarryn3@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Generator\\" : "source/"
+        }
+    }
+}
