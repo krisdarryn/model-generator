@@ -1,0 +1,28 @@
+{
+  "name": "Model Generation",
+  "homepage": "https://github.com/krisdarryn/model-generator",
+  "authors": [
+    "krisdarryn <kris@smartdrop.com.hk>"
+  ],
+  "description": "Generate Model class from specific tables.",
+  "main": "",
+  "keywords": [
+    "php",
+    "database",
+    "model",
+    "class"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jQuery": "^3.1.1",
+    "bootstrap-sass": "^3.3.7"
+  }
+}
