@@ -4,9 +4,10 @@
 */
 
 // Index page
-$klein->respond('/', function($request, $response, $service, $app) {
+$klein->respond('/', function($request, $response, $service, $app) use ($klein) {
    
     $controller = new \Generator\Controllers\IndexController(array(
+        'klein' => $klein,
         'request' => $request,
         'response' => $response,
         'service' => $service,
@@ -22,7 +23,6 @@ $klein->respond('/[:controller]?/[:action]?', function($request, $response, $ser
 
     if (($request->controller && ($request->controller !== 'page-not-found')) && !class_exists($controller)) {
         return $response->redirect(CONFIG_URI . '/page-not-found');
-        exit;
     }
     
     $controllerObj = new $controller(array(

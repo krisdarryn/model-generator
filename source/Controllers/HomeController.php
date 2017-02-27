@@ -19,7 +19,6 @@ class HomeController extends ControllerBase {
     }
     
     public function index() {
-        
         return 'home index';
     }
 }

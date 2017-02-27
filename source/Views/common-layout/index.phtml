@@ -1,0 +1,48 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title><?php echo "{$this->escape($this->sharedData()->get('htmlVar')['htmlTitle'])} | {$this->escape($this->sharedData()->get('htmlVar')['htmlTitleSuffix'])}";  ?></title>
+        
+        <?php 
+            // Set all CSS Librarires
+            foreach ($this->sharedData()->get('cssLibs') as $name => $cssLib) {
+                echo '<link rel="stylesheet" href="' . $cssLib . '">';
+            }
+
+            // Set all custom CSS
+            foreach ($this->sharedData()->get('cssCustoms') as $name => $cssCustom) {
+                echo '<link rel="stylesheet" href="' . $cssCustom . '">';
+            }
+        ?>
+
+    </head>
+    <body>
+        <?php $this->yieldView(); ?>
+
+
+        <?php 
+            // Set all JS Librarires
+            foreach ($this->sharedData()->get('jsLibs') as $name => $jsLib) {
+                echo '<script src="' . $jsLib . '"></script>';
+                echo "\n";
+            }
+
+            // Backend variables to be converted in to JS variables
+            echo '<script type="text/javascript">';
+            echo "\n\t";
+            foreach ($this->sharedData()->get('jsVars') as $name => $value) {
+                echo "var {$name} = " . json_encode($value) . ';';
+                echo "\n\t";
+            }
+
+            echo '</script>';
+            
+            // Set all custom JS
+            foreach ($this->sharedData()->get('jsCustoms') as $name => $jsCustom) {
+                echo '<script src="' . $jsCustom . '"></script>';
+                echo "\n";
+            }
+        ?>
+    </body>
+</html>
+

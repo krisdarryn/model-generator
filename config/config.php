@@ -13,7 +13,15 @@ $basePath = implode(SEPARATOR, $basePath);
 define('BASE_PATH', $basePath . SEPARATOR);
 define('VIEW_PATH', BASE_PATH . SEPARATOR . 'source' . SEPARATOR . 'Views' . SEPARATOR);
 
-// Always include trailing slash
+// System configuration constants
 define('CONFIG_URI', '/model-gen');
 define('CONTROLLER_NAMESPACE', '\Generator\Controllers\\');
 define('HTML_TITLE', 'Model Generator');
+
+// Web path
+define('ASSETS_PATH', CONFIG_URI . '/assets/');
+define('PUBLIC_PATH', CONFIG_URI . '/public/');
+define('CSS_PATH', PUBLIC_PATH . 'css/');
+define('JS_PATH', PUBLIC_PATH . 'js/');
+define('IMAGES_PATH', PUBLIC_PATH . 'images/');
+define('BOWER_PATH', ASSETS_PATH . 'bower_components/');
