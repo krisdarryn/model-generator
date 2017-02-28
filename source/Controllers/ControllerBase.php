@@ -80,7 +80,14 @@ class ControllerBase {
      * @var array
      */
     protected $jsVars;
-
+    
+    /**
+    * Holds session instance
+    *
+    * @var \Aura\Session\Segment
+    */
+    protected $session;
+    
     /**
     * Constructor
     *
@@ -97,7 +104,10 @@ class ControllerBase {
         $this->response = isset($options['response']) ? $options['response'] : null;
         $this->service = isset($options['service']) ? $options['service'] : null;
         $this->app = isset($options['app']) ? $options['app'] : null;
-
+        $this->session = $this->service
+                              ->sharedData()
+                              ->get('session');
+        
         // Set the default view layout
         $this->service
              ->layout(VIEW_PATH . 'common-layout/index.phtml');

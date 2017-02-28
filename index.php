@@ -35,6 +35,14 @@ require_once __DIR__ . SEPARATOR . 'config' . SEPARATOR . 'config.php';
 // Initialize $klein object
 $klein = new \Klein\Klein();
 
+// Register Session
+$sessionFactory = new \Aura\Session\SessionFactory();
+$session = $sessionFactory->newInstance($_COOKIE);
+$segment = $session->getSegment('Generator');
+$klein->service()
+      ->sharedData()
+      ->set('session', $segment);
+      
 // Register the routes
 $klein->with(CONFIG_URI, function() use ($klein) {
 
