@@ -1,0 +1,45 @@
+<h1 class="sr-only">Home Page</h1>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-xs-12 col-sm-3">
+            
+            <div id="mg-table-list-wrap">
+                <div class="mg-tbl-header">
+                    <h2>Tables</h2>            
+                </div>
+                <div class="mg-tbl-body">
+                    
+                    <div class="panel-group" id="mg-tbl-accordion" role="tablist" aria-multiselectable="true">
+
+                        <?php foreach ($this->tables as $key => $table) { ?>
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading" role="tab" id="<?php echo "mg-tbl-head-{$key}-{$table[0]}"; ?>">
+                                    <h4 class="panel-title">
+                                        <a role="button" data-toggle="collapse" data-parent="#mg-tbl-accordion" href="#<?php echo "mg-tbl-body-{$key}-{$table[0]}"; ?>" aria-expanded="false" aria-controls="mg-tbl">
+                                            <?php echo ucwords(str_replace('_', ' ', $table[0])); ?>
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div class="panel-collapse collapse" id="<?php echo "mg-tbl-body-{$key}-{$table[0]}"; ?>" role="taboabel" aria-labelledby="<?php echo "mg-tbl-head-{$key}-{$table[0]}"; ?>">
+                                    <div class="panel-body">
+                                        asdsadsad
+                                    </div>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    </div>
+
+                </div>
+
+            </div>
+            
+
+        </div>
+
+        <div class="col-xs-12 col-sm-9"></div>
+
+    </div>
+</div>
