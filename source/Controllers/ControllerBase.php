@@ -2,6 +2,8 @@
 
 namespace Generator\Controllers;
 
+use Generator\Models\SchemaUtility;
+
 class ControllerBase {
     
     /**
@@ -87,7 +89,15 @@ class ControllerBase {
     * @var \Aura\Session\Segment
     */
     protected $session;
-    
+
+    /**
+     * Holds SchemaUtility instance
+     * 
+     * @var \Generator\Models\SchemaUtility
+     */
+    protected $schemaUtility;
+
+
     /**
     * Constructor
     *
@@ -113,6 +123,24 @@ class ControllerBase {
              ->layout(VIEW_PATH . 'common-layout/index.phtml');
 
         $this->registerComponents();
+
+        // Access Control List
+        // If not connected redirect to the landing page
+        $ignoreURI = array(
+            BASE_URI, 
+            INDEX_URI,
+            PAGE_NOT_FOUND_URI,
+        );
+
+        if ((!$this->session->get('isConnected') && !in_array($this->request->uri(), $ignoreURI)) ) {
+            return $this->response->redirect(BASE_URI);
+        } else if ($this->session->get('isConnected') && in_array($this->request->uri(), array(BASE_URI, INDEX_URI)) ) {
+            return $this->response->redirect(HOME_URI);
+        }
+
+        if ($this->session->get('dbCredentials')) {
+            $this->schemaUtility = new SchemaUtility($this->service);
+        }
     }
 
     /**

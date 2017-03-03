@@ -22,7 +22,7 @@ $klein->respond('/[:controller]?/[:action]?', function($request, $response, $ser
     $controller = CONTROLLER_NAMESPACE . str_replace(' ', '', ucwords(str_replace('-', ' ', $request->controller))) . 'Controller';
 
     if (($request->controller && ($request->controller !== 'page-not-found')) && !class_exists($controller)) {
-        return $response->redirect(CONFIG_URI . '/page-not-found');
+        return $response->redirect(PAGE_NOT_FOUND_URI);
     }
     
     $controllerObj = new $controller(array(

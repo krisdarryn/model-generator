@@ -42,7 +42,8 @@ $segment = $session->getSegment('Generator');
 $klein->service()
       ->sharedData()
       ->set('session', $segment);
-      
+
+
 // Register the routes
 $klein->with(CONFIG_URI, function() use ($klein) {
 
