@@ -2,6 +2,8 @@
 
 namespace Generator\Controllers;
 
+use Generator\Models\SchemaUtility;
+
 class ControllerBase {
     
     /**
@@ -80,6 +82,21 @@ class ControllerBase {
      * @var array
      */
     protected $jsVars;
+    
+    /**
+    * Holds session instance
+    *
+    * @var \Aura\Session\Segment
+    */
+    protected $session;
+
+    /**
+     * Holds SchemaUtility instance
+     * 
+     * @var \Generator\Models\SchemaUtility
+     */
+    protected $schemaUtility;
+
 
     /**
     * Constructor
@@ -97,12 +114,33 @@ class ControllerBase {
         $this->response = isset($options['response']) ? $options['response'] : null;
         $this->service = isset($options['service']) ? $options['service'] : null;
         $this->app = isset($options['app']) ? $options['app'] : null;
-
+        $this->session = $this->service
+                              ->sharedData()
+                              ->get('session');
+        
         // Set the default view layout
         $this->service
              ->layout(VIEW_PATH . 'common-layout/index.phtml');
 
         $this->registerComponents();
+
+        // Access Control List
+        // If not connected redirect to the landing page
+        $ignoreURI = array(
+            BASE_URI, 
+            INDEX_URI,
+            PAGE_NOT_FOUND_URI,
+        );
+
+        if ((!$this->session->get('isConnected') && !in_array($this->request->uri(), $ignoreURI)) ) {
+            return $this->response->redirect(BASE_URI);
+        } else if ($this->session->get('isConnected') && in_array($this->request->uri(), array(BASE_URI, INDEX_URI)) ) {
+            return $this->response->redirect(HOME_URI);
+        }
+
+        if ($this->session->get('dbCredentials')) {
+            $this->schemaUtility = new SchemaUtility($this->service);
+        }
     }
 
     /**

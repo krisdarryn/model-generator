@@ -4,7 +4,8 @@
     "type": "project",
     "require-dev": {
         "illuminate/database": "^5.4",
-        "klein/klein": "^2.1"
+        "klein/klein": "^2.1",
+        "aura/session": "^2.1"
     },
     "authors": [
         {
