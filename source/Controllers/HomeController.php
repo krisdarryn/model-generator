@@ -24,7 +24,7 @@ class HomeController extends ControllerBase {
 	public function index() {
 		$tables = $this->schemaUtility->listAllTables();
 
-		debug_r(\Generator\Models\ClassGenerator::generate(array(
+		$c = \Generator\Models\ClassGenerator::generate(array(
 			'namespace' => 'Generator\Models',
 			'uses' => array(
 				'Generator\Models\Class1',
@@ -33,8 +33,21 @@ class HomeController extends ControllerBase {
 			),
 			'parent' => 'General',
 			'className' => 'Properties', 
-			'fields' => $this->schemaUtility->getTableDetails('properties')
-		)));
+			'implements' => array(
+				'Class1',
+				'Class2',
+				'class3'
+			),
+			'constructorParameters' => array(
+				'TypeHint1' => '$typeHint1', 
+				'TypeHint2' => '$typeHint2', 
+				'$parameter1', 
+				'$parameter2', 
+			),
+			'fields' => $this->schemaUtility->getTableDetails('carts')
+		));
+
+		debug_r(htmlentities($c));
 exit;
 		$this->service
 			 ->render(VIEW_PATH . 'home/index.phtml', array(
