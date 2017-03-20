@@ -2,8 +2,8 @@
 
 namespace Generator\Controllers;
 
-use Generator\Models\iDBDrivers;
-use Generator\Models\DBConnection;
+use Generator\Models\DB\iDBDrivers;
+use Generator\Models\DB\DBConnection;
 
 class IndexController extends ControllerBase {
     
@@ -64,10 +64,7 @@ class IndexController extends ControllerBase {
             }
             
         }
-
-        /*$a = file_get_contents(__FILE__);
-        debug_r(json_encode(htmlentities($a)));*/
-
+        
         $this->service
              ->render(VIEW_PATH . 'index/index.phtml', array(
                     'dbDrivers' => $this->drivers

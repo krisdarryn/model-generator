@@ -2,7 +2,11 @@
 
 namespace Generator\Models;
 
-class SchemaUtility {
+use Generator\Models\DB\iDBDrivers;
+use Generator\Models\DB\DBConnection;
+use Generator\Models\DB\Adapter\MySql;
+
+class SchemaUtility extends ModelBase {
     
     /**
      * Holds DBConnection instance
@@ -12,50 +16,35 @@ class SchemaUtility {
     private $dbInstance;
 
     /**
-     * Holds service provider instance
-     * 
-     * @var \Klein\ServiceProvider
-     */
-    private $service;
-
-    /**
      * Holds PDO instance
      * 
      * @var \PDO
      */
     private $pdo;
 
+
     /**
      * Constructor
-     * 
-     * @param \Klein\ServiceProvider $service
      */
-    public function __construct($service) {
-        $this->service = $service;
-        $this->dbInstance = DBConnection::getInstance($this->service->sharedData()->get('session')->get('dbCredentials'));
+    public function __construct() {
+        parent::__construct();
+
+        $this->dbInstance = DBConnection::getInstance($this->klein->service()->sharedData()->get('session')->get('dbCredentials'));
         $this->pdo = $this->dbInstance->getConnectionInstance()->getPdo();
     }
 
     /**
-     * List all talbes inside the schema
-     * 
-     * @return array
+     * Create appropriate DB Adapter
+     *
+     * @return \Generator\Models\DB\Adapter
      */
-    public function listAllTables() {
-        return $this->pdo
-                    ->query('SHOW TABLES')
-                    ->fetchAll();
+    public function getDBAdapter() {
+        
+        switch ($this->klein->service()->sharedData()->get('session')->get('dbCredentials')['driver']) {
+            case iDBDrivers::MYSQL:
+                return new Mysql($this->pdo);
+        }
+
     }
 
-    /**
-     * Fetch details of the specified table
-     * 
-     * @param  string $tableName
-     * @return array
-     */
-    public function getTableDetails($tableName) {
-        return $this->pdo
-                    ->query("DESCRIBE {$tableName}")
-                    ->fetchAll();
-    }
 }

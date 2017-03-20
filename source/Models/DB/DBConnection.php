@@ -1,6 +1,6 @@
 <?php
 
-namespace Generator\Models;
+namespace Generator\Models\DB;
 
 use Illuminate\Database\Capsule\Manager;
 

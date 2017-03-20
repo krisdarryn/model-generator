@@ -139,7 +139,7 @@ class ControllerBase {
         }
 
         if ($this->session->get('dbCredentials')) {
-            $this->schemaUtility = new SchemaUtility($this->service);
+            $this->schemaUtility = new SchemaUtility();
         }
     }
 

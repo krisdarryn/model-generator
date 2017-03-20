@@ -22,9 +22,9 @@ class HomeController extends ControllerBase {
 	 * Home Page
 	 */
 	public function index() {
-		$tables = $this->schemaUtility->listAllTables();
+		$tables = $this->schemaUtility->getDBAdapter()->listAllTable();
 
-		$c = \Generator\Models\ClassGenerator::generate(array(
+$opt = array(
 			'namespace' => 'Generator\Models',
 			'uses' => array(
 				'Generator\Models\Class1',
@@ -44,10 +44,15 @@ class HomeController extends ControllerBase {
 				'$parameter1', 
 				'$parameter2', 
 			),
-			'fields' => $this->schemaUtility->getTableDetails('carts')
-		));
+			'fields' => $this->schemaUtility->getDBAdapter()->getTableDetails('db'),
+			'noOfIndentSpace' => 4,
+			'setters' => true,
+			'getters' => true
+		);
+		$cls = new \Generator\Models\ClassGenerator($opt);
 
-		debug_r(htmlentities($c));
+debug_r(htmlentities($cls->generate()));
+
 exit;
 		$this->service
 			 ->render(VIEW_PATH . 'home/index.phtml', array(
