@@ -15,6 +15,26 @@ class ClassGenerator {
     const LOWER_CAMEL_CASE = 1;
 
     /**
+     * @var int
+     */
+    const UPPER_CAMEL_CASE = 2;
+
+    /**
+     * @var int
+     */
+    const ACS_MOD_PUBLIC = 0;
+
+    /**
+     * @var int
+     */
+    const ACS_MOD_PRIVATE = 1;
+
+    /**
+     * @var int
+     */
+    const ACS_MOD_PROTECTED = 2;
+
+    /**
      * Holds the Metadata for the class to generate
      * Format;
      * [
@@ -149,6 +169,11 @@ class ClassGenerator {
 
         // Prepare return annotation
         if (isset($annotations['return']) && $annotations['return']) {
+
+            if (!isset($annotations['params'])) {
+                $comment .= $this->genereateIndentSpace() . " *\n";
+            }
+
             $comment .= $this->genereateIndentSpace() . " * @return {$annotations['return']}\n";
         }
 
@@ -159,13 +184,15 @@ class ClassGenerator {
      * Convert field to the appropriate naming convention
      *
      * @param string $fieldName
+     * @param null|int $namingOpt
      * @return string
      */
-    public function getConvetedField($fieldName) {
+    public function getConvetedField($fieldName, $namingOpt = null) {
         
-        if (isset($this->options['fieldNamingConvention'])) {
+        if (isset($this->options['fieldNamingConvention']) || $namingOpt) {
+            $namingOpt? : $this->options['fieldNamingConvention'];
 
-            switch ($this->options['fieldNamingConvention']) {
+            switch ($namingOpt) {
                 case self::LOWERCASE_SEPARATED_BY_UNDERSCORE:
                     $fieldName = strtolower(preg_replace('/[-_ ]/', '_', $fieldName));
                     break;
@@ -173,10 +200,37 @@ class ClassGenerator {
 
                 case self::LOWER_CAMEL_CASE;
                     $fieldName = str_replace(' ', '', lcfirst(ucwords(preg_replace('/[-_ ]/', ' ', $fieldName))));
+                    break;
+
+                case self::UPPER_CAMEL_CASE:
+                    $fieldName = str_replace(' ', '', ucfirst(ucwords(preg_replace('/[-_ ]/', ' ', $fieldName))));
+
             }
         }
         
         return $fieldName;
+    }
+
+    /**
+     * Get the access modifier
+     *
+     * @param int $acsMod
+     * @return string
+     */
+    public function getAccessModifier($acsMod = null) {
+        $acsMod?: self::ACS_MOD_PUBLIC;
+        $output = 'public';
+
+        switch ($acsMod) {
+            case self::ACS_MOD_PRIVATE:
+                $output = 'public';
+                break;
+
+            case self::ACS_MOD_PROTECTED:
+                $output = 'protected';
+        }
+
+        return $output;
     }
 
     /**
@@ -254,11 +308,10 @@ class ClassGenerator {
             $class .= $this->generateDocBlockComment(array(
                 'variable' => $fieldData['datatype'],
             ));
-            $class .= $this->genereateIndentSpace() . "\${$this->getConvetedField($fieldData['name'])} \n\n";
+            $class .= $this->genereateIndentSpace() . $this->getAccessModifier() . " \${$this->getConvetedField($fieldData['name'])} \n\n";
         }
 
         return $class;
-
     }
 
     /**
@@ -294,15 +347,66 @@ class ClassGenerator {
             $class = rtrim($class, ', ');
         }
 
-        return $class .= ') {}';
+        return $class .= ") {}\n\n";
     }
 
+    /**
+     * Generate class property setters
+     *
+     * @return string
+     */
     public function generateSetters() {
+        $class = '';
 
+        foreach ($this->options['fields'] as $name => $fieldData) {
+
+            $class .= $this->generateDocBlockComment(array(
+                'description' => "Setter for {$fieldData['name']}",
+                'params' => [
+                    $fieldData['datatype'] => "\${$fieldData['name']}"
+                ]
+            ));
+            $class .= $this->genereateIndentSpace() . 'public function set' . $this->getConvetedField($fieldData['name'], self::UPPER_CAMEL_CASE);
+            $class .= '($' . $this->getConvetedField($fieldData['name']) . ") {\n";
+            $class .= $this->genereateIndentSpace() . $this->genereateIndentSpace() . '$this->' . $fieldData['name'] ." = \${$fieldData['name']}\n";
+            $class .= $this->genereateIndentSpace() . "}\n\n";
+
+        }
+
+        return $class;
     }
 
+    /**
+     * Generate class property getters
+     *
+     * @return string
+     */
     public function generateGetters() {
+        $class = '';
 
+        foreach ($this->options['fields'] as $name => $fieldData) {
+
+            $class .= $this->generateDocBlockComment(array(
+                'description' => "Get {$fieldData['name']}",
+                'return' => $fieldData['datatype']
+            ));
+            $class .= $this->genereateIndentSpace() . 'public function get' . $this->getConvetedField($fieldData['name'], self::UPPER_CAMEL_CASE);
+            $class .= "() {\n";
+            $class .= $this->genereateIndentSpace() . $this->genereateIndentSpace() . ' return $this->' . $fieldData['name'] ."\n";
+            $class .= $this->genereateIndentSpace() . "}\n\n";
+
+        }
+
+        return $class;
+    }
+
+    /**
+     * Clossin class bracket
+     * 
+     * @return string
+     */
+    public function closeClass() {
+        return '}';
     }
 
     /**
@@ -325,6 +429,19 @@ class ClassGenerator {
 
         // Constructor
         $class .= $this->generateClassConstructor();
+
+        // Setters 
+        if (isset($this->options['setters']) && $this->options['setters']) {
+            $class .= $this->generateSetters();
+        }
+
+        // Getters
+        if (isset($this->options['getters']) && $this->options['getters']) {
+            $class .= $this->generateGetters();
+        }
+
+        // Close class template
+        $class .= $this->closeClass();
 
         return $class;
     }
